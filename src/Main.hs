@@ -30,7 +30,7 @@ main = do
 
   pivotWorkingDirectory (takeDirectory configPath)
 
-  createDirectoryIfMissing True ".nix-project-cache"
+  createDirectoryIfMissing True ".nix-project/cache"
 
   let tool = nixProjectTool yaml
 
@@ -54,7 +54,7 @@ main = do
   let attributeArgs = toList (attribute tool) >>=
                          \attr -> [ "-A", attr ]
                          
-  let outputArgs = [ "-o", ".nix-project-cache/tool" ]
+  let outputArgs = [ "-o", ".nix-project/cache/tool" ]
   
   let nixBuildArgs = outputArgs ++ attributeArgs ++ pathArgs
   
@@ -66,7 +66,7 @@ main = do
     diagLn "np: the build tool could not be built"
     exitWith e
 
-  executeFile ".nix-project-cache/tool/bin/-nix-project-tool" False args Nothing
+  executeFile ".nix-project/cache/tool/bin/-nix-project-tool" False args Nothing
 
 -- | Nix string escaping
 escape :: String -> String
@@ -83,7 +83,7 @@ escape s = "\"" ++ f s ++ "\""
   where f = concatMap g
         g '"' = "\\\""
         g '\\' = "\\\\"
-        g '$' = "\\$" -- escaping only "${" would be sufficient but '$' does no harm
+        g '$' = "\\$" -- escaping only "${" would be sufficient but escaping every '$' does no harm
         g '\n' = "\\n"
         g '\r' = "\\r"
         g '\t' = "\\t"
